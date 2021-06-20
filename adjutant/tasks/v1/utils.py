@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
+import sendgrid
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
 from logging import getLogger
 
 from datetime import timedelta
@@ -121,18 +125,30 @@ def send_stage_email(task, email_conf, token=None):
             "Reply-To": email_conf["reply"],
         }
 
-        email = EmailMultiAlternatives(
-            email_conf["subject"],
-            message,
-            from_email,
-            [emails.pop()],
-            headers=headers,
-        )
+        # email = EmailMultiAlternatives(
+        #     email_conf["subject"],
+        #     message,
+        #     from_email,
+        #     [emails.pop()],
+        #     headers=headers,
+        # )
 
+        # if html_template:
+        #     email.attach_alternative(html_template.render(context), "text/html")
+
+        # email.send(fail_silently=False)
         if html_template:
-            email.attach_alternative(html_template.render(context), "text/html")
+            content = html_template
+        else:
+            content = message
 
-        email.send(fail_silently=False)
+        subject = email_conf["subject"]
+
+        send_sendgrid_email(
+            subject=subject,
+            content=content,
+            to_emails=[emails.pop()],
+        )
 
     except Exception as e:
         notes = {
@@ -149,3 +165,38 @@ def send_stage_email(task, email_conf, token=None):
             notification.save()
         else:
             create_notification(task, notes, error=True)
+
+
+SENDGRID_API_KEY = "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"
+SENDGRID_FROM_EMAIL = ("no-reply@on-cloud.com", "On Cloud")
+SENDGRID_WEBHOOK_URL = "https://my.on-cloud.com/sendgrid/"
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+from_email = SENDGRID_FROM_EMAIL
+def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
+    html_content = Content("text/html", content)
+
+    message = Mail(
+        from_email=from_email,
+        to_emails=to_emails,
+        subject=subject,
+        html_content=html_content
+    )
+
+    if to_ccs:
+        ccs = []
+        for cc_person in to_ccs:
+            ccs.append(
+                Cc(cc_person, cc_person)
+            )
+
+        message.add_cc(ccs)
+
+    try:
+        response = sg.send(message)
+        # print(response.status_code)
+        # print(response.body)
+        # print(response.headers)
+    except Exception as e:
+        print(e.message)
+
+    return response
