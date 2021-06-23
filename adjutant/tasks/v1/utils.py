@@ -137,16 +137,18 @@ def send_stage_email(task, email_conf, token=None):
         #     email.attach_alternative(html_template.render(context), "text/html")
 
         # email.send(fail_silently=False)
-        if html_template:
-            content = html_template
-        else:
-            content = message
+        # if html_template:
+        #     content = html_template
+        # else:
+        #     content = message
 
         subject = email_conf["subject"]
 
+        print(message)
+
         send_sendgrid_email(
             subject=subject,
-            content=content,
+            content=message,
             to_emails=[emails.pop()],
         )
 
