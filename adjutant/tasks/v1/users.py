@@ -26,11 +26,11 @@ class InviteUser(BaseTask):
     email_config = {
         "initial": None,
         "token": {
-            "template": "invite_user_to_project_token.txt",
+            "template": "invite_user_to_project_token.html",
             "subject": "invite_user_to_project",
         },
         "completed": {
-            "template": "invite_user_to_project_completed.txt",
+            "template": "invite_user_to_project_completed.html",
             "subject": "invite_user_to_project",
         },
     }
