@@ -21,6 +21,8 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -163,3 +165,8 @@ EMAIL_HOST_USER = adj_conf.django.email.host_user
 EMAIL_HOST_PASSWORD = adj_conf.django.email.host_password
 EMAIL_USE_TLS = adj_conf.django.email.use_tls
 EMAIL_USE_SSL = adj_conf.django.email.use_ssl
+
+# Sengrid Settings
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+SENDGRID_FROM_EMAIL = os.environ.get("SENDGRID_FROM_EMAIL")
+SENDGRID_WEBHOOK_URL = os.environ.get("SENDGRID_WEBHOOK_URL")

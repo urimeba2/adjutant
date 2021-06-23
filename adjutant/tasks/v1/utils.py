@@ -33,6 +33,13 @@ from adjutant import exceptions
 
 LOG = getLogger("adjutant")
 
+from django.conf import settings
+SENDGRID_API_KEY = settings.SENDGRID_API_KEY
+SENDGRID_FROM_EMAIL = settings.SENDGRID_FROM_EMAIL
+SENDGRID_WEBHOOK_URL = settings.SENDGRID_WEBHOOK_URL
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+
+
 
 def handle_task_error(e, task, error_text="while running task"):
     import traceback
@@ -144,8 +151,6 @@ def send_stage_email(task, email_conf, token=None):
 
         subject = email_conf["subject"]
 
-        print(message)
-
         send_sendgrid_email(
             subject=subject,
             content=message,
@@ -169,10 +174,10 @@ def send_stage_email(task, email_conf, token=None):
             create_notification(task, notes, error=True)
 
 
-sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
-from_email = SENDGRID_FROM_EMAIL
+
 def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     html_content = Content("text/html", content)
+    from_email = SENDGRID_FROM_EMAIL
 
     message = Mail(
         from_email=from_email,
@@ -192,9 +197,6 @@ def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
 
     try:
         response = sg.send(message)
-        # print(response.status_code)
-        # print(response.body)
-        # print(response.headers)
     except Exception as e:
         print(e.message)
 
