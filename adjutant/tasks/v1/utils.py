@@ -178,31 +178,42 @@ def send_stage_email(task, email_conf, token=None):
 def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     html_content = Content("text/html", content)
     from_email = SENDGRID_FROM_EMAIL
-    print(from_email)
-    print(SENDGRID_API_KEY)
-    print(sg)
 
-    message = Mail(
-        from_email=from_email,
-        to_emails=to_emails,
-        subject=subject,
-        html_content=html_content
-    )
+    # print(from_email)
+    # print(SENDGRID_API_KEY)
+    # print(sg)
 
-    if to_ccs:
-        ccs = []
-        for cc_person in to_ccs:
-            ccs.append(
-                Cc(cc_person, cc_person)
-            )
+    # message = Mail(
+    #     from_email=from_email,
+    #     to_emails=to_emails,
+    #     subject=subject,
+    #     html_content=html_content
+    # )
 
-        message.add_cc(ccs)
+    # if to_ccs:
+    #     ccs = []
+    #     for cc_person in to_ccs:
+    #         ccs.append(
+    #             Cc(cc_person, cc_person)
+    #         )
 
-    mail_json = message.get()
-    print(mail_json)
+    #     message.add_cc(ccs)
+
+    # mail_json = message.get()
+    # print(mail_json)
+
+    
 
     try:
-        response = sg.send(message)
+        # response = sg.send(message)
+        to_email = 'urimeba511@gmail.com'
+        subject = "Sending with SendGrid is Fun"
+        content = Content("text/plain", "and easy to do anywhere, even with Python")
+        mail = Mail(from_email, to_email, subject, content)
+        response = sg.client.mail.send.post(request_body=mail.get())
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
     except Exception as e:
         print(e)
         print(e.body)
