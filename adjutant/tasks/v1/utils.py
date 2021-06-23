@@ -169,9 +169,6 @@ def send_stage_email(task, email_conf, token=None):
             create_notification(task, notes, error=True)
 
 
-SENDGRID_API_KEY = "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"
-SENDGRID_FROM_EMAIL = ("no-reply@on-cloud.com", "On Cloud")
-SENDGRID_WEBHOOK_URL = "https://my.on-cloud.com/sendgrid/"
 sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 from_email = SENDGRID_FROM_EMAIL
 def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
