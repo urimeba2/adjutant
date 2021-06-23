@@ -46,12 +46,12 @@ class ResetUserPassword(BaseTask):
     email_config = {
         "initial": None,
         "token": {
-            "template": "reset_user_password_token.txt",
-            "subject": "Password Reset for OpenStack",
+            "template": "reset_user_password_token.html",
+            "subject": "Password Reset for Lorius",
         },
         "completed": {
-            "template": "reset_user_password_completed.txt",
-            "subject": "Password Reset for OpenStack",
+            "template": "reset_user_password_completed.html",
+            "subject": "Password Reset for Lorius",
         },
     }
 
