@@ -177,7 +177,7 @@ def send_stage_email(task, email_conf, token=None):
 
 def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     html_content = Content("text/html", content)
-    from_email = SENDGRID_FROM_EMAIL
+    from_email = ("no-reply@on-cloud.com", "On Cloud")
 
     # print(from_email)
     # print(SENDGRID_API_KEY)
