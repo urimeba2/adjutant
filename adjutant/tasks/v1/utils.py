@@ -198,6 +198,9 @@ def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
 
         message.add_cc(ccs)
 
+    mail_json = message.get()
+    print(mail_json)
+
     try:
         response = sg.send(message)
     except Exception as e:
