@@ -704,7 +704,9 @@
                                                                     Lorius.
 
                                                                     Please click on this link to accept the invitation:
-                                                                    {{ tokenurl }}{{ token }}
+                                                                    <a href="{{ tokenurl }}{{ token }}">
+                                                                        {{ tokenurl }}{{ token }}
+                                                                    </a>
 
                                                                     {% spaceless %}
                                                                     {% if task.cache.user_state == "default" %}
