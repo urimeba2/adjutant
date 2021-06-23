@@ -178,6 +178,9 @@ def send_stage_email(task, email_conf, token=None):
 def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     html_content = Content("text/html", content)
     from_email = SENDGRID_FROM_EMAIL
+    print(from_email)
+    print(SENDGRID_API_KEY)
+    print(sg)
 
     message = Mail(
         from_email=from_email,
@@ -198,6 +201,8 @@ def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     try:
         response = sg.send(message)
     except Exception as e:
+        print(e)
+        print(e.body)
         print(e.message)
 
     return response
