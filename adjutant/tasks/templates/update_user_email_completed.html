@@ -699,46 +699,26 @@
                                                                 style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
                                                                 <p style="text-align: justify;">
-                                                                    You have been invited by {{ task.keystone_user.username }} to join the project
-                                                                    '{{ task.keystone_user.project_name }}' on
-                                                                    Lorius.
+                                                                    This email is to confirm that your Lorius account
+                                                                    email has now been changed.
 
-                                                                    Please click on this link to accept the invitation:
-                                                                    <a href="{{ tokenurl }}{{ token }}">
-                                                                        {{ tokenurl }}{{ token }}
-                                                                    </a>
-
-                                                                    {% spaceless %}
-                                                                    {% if task.cache.user_state == "default" %}
-                                                                    You will be asked to define a password when
-                                                                    accepting the invitation. After that you will be
-                                                                    given access to the project and will be able to
-                                                                    login.
-                                                                    {% elif task.cache.user_state == "existing" %}
-                                                                    As an existing user you will be added to the project
-                                                                    and do not need to provide additional information.
-                                                                    All you have to do is click confirm.
-                                                                    {% elif task.cache.user_state == "disabled" %}
-                                                                    It appears you already have a user account that was
-                                                                    disabled. We've reactivated it, but because it may
-                                                                    have been a while we've reset your password. After
-                                                                    you setup your new password you will be given access
-                                                                    to the project and will be able to login.
-                                                                    {% else %}
-                                                                    If you are a new user you will have to define a
-                                                                    password when accepting the invitation, while as an
-                                                                    existing user you simply need to click confirm.
-                                                                    {% endif %}
-                                                                    {% endspaceless %}
-
-                                                                    This link will expire automatically after 24 hours.
-                                                                    If expired, you will need to request another one
-                                                                    from the person who invited you.
+                                                                    Kind regards,
+                                                                    The Lorius team
 
                                                                 </p>
 
 
-                                                                {% include "footer.html" %}
+                                                                <p style="text-align: justify;"><span
+                                                                        style="font-size:14px">¡Gracias por formar parte
+                                                                        de Lorius!<br>
+                                                                        Si tienes preguntas o inquietudes adicionales,
+                                                                        por favor<br>
+                                                                        Comunícate con&nbsp;<a
+                                                                            href="mailto:alianzas@on-cloud.email"
+                                                                            target="_blank">nosotros</a>.<br>
+                                                                        &nbsp;<br>
+                                                                        Atentamente,<br>
+                                                                        Lorius.</span></p>
 
                                                             </td>
                                                         </tr>
