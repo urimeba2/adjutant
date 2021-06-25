@@ -1,8 +1,8 @@
 django:
   # String - The Django secret key.
-  secret_key: Do not ever use this awful secret in prod!!!!
+  secret_key: somesupersecretsecret
   # Boolean - Django debug mode is turned on.
-  debug: false
+  debug: true
   # List - The Django allowed hosts
   allowed_hosts:
     - '*'
@@ -35,20 +35,20 @@ django:
   log_file: adjutant.log
   email:
     # String - Django email backend to use.
-    email_backend: django.core.mail.backends.console.EmailBackend
-    # Integer - Email backend timeout.
-    # timeout: <your_value>
-    # Hostname - Email backend server location.
-    # host: <your_value>
-    # Port - Email backend server port.
-    # port: <your_value>
-    # String - Email backend user.
-    # host_user: <your_value>
-    # String - Email backend user password.
-    # host_password: <your_value>
-    # Boolean - Whether to use TLS for email. Mutually exclusive with 'use_ssl'.
-    use_tls: false
-    # Boolean - Whether to use SSL for email. Mutually exclusive with 'use_tls'.
+    email_backend: django.core.mail.backends.smtp.EmailBackend
+    # TIEMPO EN SEGUNDOS QUE ESPERA RESPUESTA DEL SERVIDOR PARA ENVIAR EL CORREO
+    timeout: 60
+    # HOSTNAME DEL SERVIDOR DE CORREOS DEL CUAL SE ENVIAN
+    host: smtp.gmail.com
+    # PUERTO DEL SERVIDOR DE CORREOS
+    port: 587
+    # CORREO DEL CUAL SE ENVIAN LOS CORREOS A LOS CLIENTES
+    host_user: somemail@gmail.com
+    # CONTRASEÑA DEL CORREO (SE DEBE VERIFICAR LA SEGURIDAD PARA HABILITAR LA OPCION DE ENVIAR CORREOS)
+    host_password: some_password
+    # BOOLEANO QUE ACTIVA TLS (MUTUAMENTE EXLUCLUSIVO CON SSL)
+    use_tls: true
+    # BOOLEANO QUE ACTIVA SSL (MUTUAMENTE EXCLUSIVO CON TLS)
     use_ssl: false
 
 identity:
@@ -75,19 +75,19 @@ identity:
       - heat_stack_owner
       - member
   auth:
-    # String - Username for Adjutant Keystone admin user.
-    # username: <your_value>
-    # String - Password for Adjutant Keystone admin user.
-    # password: <your_value>
-    # String - Project name for Adjutant Keystone admin user.
-    # project_name: <your_value>
-    # String - Project domain id for Adjutant Keystone admin user.
-    project_domain_id: default
-    # String - User domain id for Adjutant Keystone admin user.
-    user_domain_id: default
-    # URI - Keystone auth url that Adjutant will use.
-    # auth_url: <your_value>
-
+    username: admin_username
+    # CONTRASEÑA DEL USUARIO ADMINISTRADOR DE KEYSTONE
+    password: admin_password
+    # PROYECTO DEL USUARIO ADMINISTRADOR DE KEYSTONE (ṔOR DEFECTO ES "admin")
+    project_name: admin_project
+    # ID DEL DOMINIO DEL PROYECTO DEL USUARIO ADMINISTRADOR DE KEYSTONE (POR DEFECTO ES "default")
+    project_domain_id: project_domain_id
+    # ID DEL DOMINIO DEL USUARIO ADMINISTRADOR DE KEYSTONE (POR DEFECTO ES "default")
+    user_domain_id: user_domain_id
+    # URL DONDE SE ENCUENTRA CORRIENDO KEYSTONE (USUALMENTE ES "http://TU_URL_LOCAL/identity" o "http://localhost/identity")
+    auth_url: auht_url
+    # TIPO DE ENDPOINT DE KEYSTONE: "public" O "admin". DEBE SER "public"
+    interface: public
 api:
   # List - List of Active Delegate APIs.
   active_delegate_apis:
@@ -96,6 +96,13 @@ api:
     - UserResetPassword
     - UserList
     - RoleList
+    - SignUp
+    - UpdateProjectQuotas
+    - CreateProjectAndUser
+    - InviteUser
+    - ResetPassword
+    - EditUser
+    - UpdateEmail
   delegate_apis:
     CreateProjectAndUser:
       # String - Default region in which any potential resources may be created.
@@ -128,19 +135,19 @@ notifications:
   handler_defaults:
     EmailNotification:
       # List - List of email addresses to send this notification to.
-      # emails:
+      emails: uriel@on-cloud.email
       # String - From email for this notification.
-      from: bounce+%(task_uuid)s@example.com
+      from: bounce+%(task_uuid)s@lorius.com
       # String - Reply-to email for this notification.
-      reply: no-reply@example.com
+      reply: no-reply@lorius.com
       # String - Email template for this notification. No template will cause the email not to send.
-      template: notification.txt
+      template: notification.html
       # String - Email html template for this notification.
       # html_template: <your_value>
 
 workflow:
   # URI - The base Horizon url for Adjutant to use when producing links to Horizon.
-  horizon_url: http://localhost/
+  horizon_url: your_ip
   # Integer - The default token expiry time for Task tokens.
   default_token_expiry: 86400
   task_defaults:
@@ -149,33 +156,33 @@ workflow:
         # String - Default email subject for this stage
         subject: Task Confirmation
         # String - Default from email for this stage
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Default reply-to email for this stage
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Default email template for this stage
-        template: initial.txt
+        template: initial.html
         # String - Default email html template for this stage
         # html_template: <your_value>
       token:
         # String - Default email subject for this stage
         subject: Task Token
         # String - Default from email for this stage
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Default reply-to email for this stage
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Default email template for this stage
-        template: token.txt
+        template: token.html
         # String - Default email html template for this stage
         # html_template: <your_value>
       completed:
         # String - Default email subject for this stage
         subject: Task Completed
         # String - Default from email for this stage
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Default reply-to email for this stage
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Default email template for this stage
-        template: completed.txt
+        template: completed.html
         # String - Default email html template for this stage
         # html_template: <your_value>
     notifications:
@@ -219,7 +226,7 @@ workflow:
         # String - Name to be given to the default router.
         router_name: default_router
         # String - ID of the public network.
-        # public_network: <your_value>
+        public_network: your_public_network
         # String - CIDR for the default subnet.
         # subnet_cidr: <your_value>
         # List - DNS nameservers for the subnet.
@@ -235,7 +242,7 @@ workflow:
         # String - Name to be given to the default router.
         router_name: default_router
         # String - ID of the public network.
-        # public_network: <your_value>
+        public_network: your_public_network
         # String - CIDR for the default subnet.
         # subnet_cidr: <your_value>
         # List - DNS nameservers for the subnet.
@@ -262,9 +269,9 @@ workflow:
         # String - Email subject for this stage.
         subject: Openstack Email Notification
         # String - From email for this stage.
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Reply-to email for this stage.
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Email template for this stage. No template will cause the email not to send.
         # template: <your_value>
         # String - Email html template for this stage. No template will cause the email not to send.
@@ -281,9 +288,9 @@ workflow:
         # String - Email subject for this stage.
         subject: Openstack Email Notification
         # String - From email for this stage.
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Reply-to email for this stage.
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Email template for this stage. No template will cause the email not to send.
         # template: <your_value>
         # String - Email html template for this stage. No template will cause the email not to send.
@@ -300,9 +307,9 @@ workflow:
         # String - Email subject for this stage.
         subject: Openstack Email Notification
         # String - From email for this stage.
-        from: bounce+%(task_uuid)s@example.com
+        from: bounce+%(task_uuid)s@lorius.com
         # String - Reply-to email for this stage.
-        reply: no-reply@example.com
+        reply: no-reply@lorius.com
         # String - Email template for this stage. No template will cause the email not to send.
         # template: <your_value>
         # String - Email html template for this stage. No template will cause the email not to send.
@@ -330,28 +337,28 @@ workflow:
       # Dict - Email config overrides for this task over task defaults.See 'adjutant.workflow.emails'.
       emails:
         completed:
-          subject: signup completed
-          template: create_project_and_user_completed.txt
+          subject: Signup completed
+          template: create_project_and_user_completed.html
         initial:
-          subject: signup received
-          template: create_project_and_user_initial.txt
+          subject: Signup received
+          template: create_project_and_user_initial.html
         token:
-          subject: signup approved
-          template: create_project_and_user_token.txt
+          subject: Signup approved
+          template: create_project_and_user_token.html
       # Dict - Notification config overrides for this task over task defaults.See 'adjutant.workflow.notifications'.
       notifications:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
     edit_user_roles:
@@ -375,15 +382,15 @@ workflow:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
     invite_user_to_project:
@@ -401,25 +408,25 @@ workflow:
       emails:
         completed:
           subject: invite_user_to_project
-          template: invite_user_to_project_completed.txt
+          template: invite_user_to_project_completed.html
         initial: null
         token:
           subject: invite_user_to_project
-          template: invite_user_to_project_token.txt
+          template: invite_user_to_project_token.html
       # Dict - Notification config overrides for this task over task defaults.See 'adjutant.workflow.notifications'.
       notifications:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
     reset_user_password:
@@ -436,26 +443,26 @@ workflow:
       # Dict - Email config overrides for this task over task defaults.See 'adjutant.workflow.emails'.
       emails:
         completed:
-          subject: Password Reset for OpenStack
-          template: reset_user_password_completed.txt
+          subject: Password Reset for Lorius
+          template: reset_user_password_completed.html
         initial: null
         token:
-          subject: Password Reset for OpenStack
-          template: reset_user_password_token.txt
+          subject: Password Reset for Lorius
+          template: reset_user_password_token.html
       # Dict - Notification config overrides for this task over task defaults.See 'adjutant.workflow.notifications'.
       notifications:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
     update_user_email:
@@ -471,31 +478,31 @@ workflow:
         SendAdditionalEmailAction:
           initial:
             email_current_user: true
-            subject: OpenStack Email Update Requested
-            template: update_user_email_started.txt
+            subject: Lorius Email Update Requested
+            template: update_user_email_started.html
       # Dict - Email config overrides for this task over task defaults.See 'adjutant.workflow.emails'.
       emails:
         completed:
-          subject: Email Update Complete
-          template: update_user_email_completed.txt
+          subject: Lorius Email Update Complete
+          template: update_user_email_completed.html
         initial: null
         token:
           subject: update_user_email_token
-          template: update_user_email_token.txt
+          template: update_user_email_token.html
       # Dict - Notification config overrides for this task over task defaults.See 'adjutant.workflow.notifications'.
       notifications:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
     update_quota:
@@ -512,8 +519,8 @@ workflow:
       # Dict - Email config overrides for this task over task defaults.See 'adjutant.workflow.emails'.
       emails:
         completed:
-          subject: signup completed
-          template: create_project_and_user_completed.txt
+          subject: Signup completed
+          template: create_project_and_user_completed.html
         initial: null
         token: null
       # Dict - Notification config overrides for this task over task defaults.See 'adjutant.workflow.notifications'.
@@ -521,15 +528,15 @@ workflow:
         error_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         error_handlers:
           - EmailNotification
         standard_handler_config:
           EmailNotification:
             emails:
-              - example@example.com
-            reply: no-reply@example.com
+              - uriel@on-cloud.email
+            reply: no-reply@lorius.com
         standard_handlers:
           - EmailNotification
 
@@ -567,6 +574,10 @@ quota:
         load_balancer: 10
         member: 10
         pool: 10
+      trove:
+        backups: 100
+        instances: 20
+        volumes: 20
     medium:
       cinder:
         gigabytes: 10000
@@ -598,6 +609,10 @@ quota:
         load_balancer: 5
         member: 5
         pool: 5
+      trove:
+        backups: 50
+        instances: 10
+        volumes: 10
     small:
       cinder:
         gigabytes: 5000
@@ -629,6 +644,10 @@ quota:
         load_balancer: 1
         member: 2
         pool: 1
+      trove:
+        backups: 15
+        instances: 3
+        volumes: 3
   # List - An ascending list of all the quota size names, so that Adjutant knows their relative sizes/order.
   sizes_ascending:
     - small
@@ -640,4 +659,3 @@ quota:
       - cinder
       - neutron
       - nova
-
