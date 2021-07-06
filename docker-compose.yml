@@ -1,0 +1,36 @@
+version: '3.6'
+
+services:
+  db:
+    container_name: db
+    restart: always
+    image: mysql:5.7.34
+    env_file:
+      - ./.env
+    ports:
+      - '3306:3306'
+    volumes:
+        - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_USER=${DB_ROOT}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+  web:
+    restart: always
+    build: .
+    # command: adjutant-api runserver 192.168.0.3:5050
+    volumes:
+      - .:/usr/src/code/
+    ports:
+      - 5050:5050
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+  
+volumes:
+  db_data: 
+  # web_data: {}

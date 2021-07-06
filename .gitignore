@@ -15,3 +15,8 @@ venv/
 AUTHORS
 ChangeLog
 releasenotes/build
+etc/adjutant.dev.yaml
+
+adjutant/.env
+
+.env
