@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
+import sendgrid
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
 from logging import getLogger
 
 from datetime import timedelta
@@ -28,6 +32,10 @@ from adjutant import exceptions
 
 
 LOG = getLogger("adjutant")
+
+from django.conf import settings
+
+
 
 
 def handle_task_error(e, task, error_text="while running task"):
@@ -121,18 +129,30 @@ def send_stage_email(task, email_conf, token=None):
             "Reply-To": email_conf["reply"],
         }
 
-        email = EmailMultiAlternatives(
-            email_conf["subject"],
-            message,
-            from_email,
-            [emails.pop()],
-            headers=headers,
+        # email = EmailMultiAlternatives(
+        #     email_conf["subject"],
+        #     message,
+        #     from_email,
+        #     [emails.pop()],
+        #     headers=headers,
+        # )
+
+        # if html_template:
+        #     email.attach_alternative(html_template.render(context), "text/html")
+
+        # email.send(fail_silently=False)
+        # if html_template:
+        #     content = html_template
+        # else:
+        #     content = message
+
+        subject = email_conf["subject"]
+
+        send_sendgrid_email(
+            subject=subject,
+            content=message,
+            to_emails=[emails.pop()],
         )
-
-        if html_template:
-            email.attach_alternative(html_template.render(context), "text/html")
-
-        email.send(fail_silently=False)
 
     except Exception as e:
         notes = {
@@ -149,3 +169,37 @@ def send_stage_email(task, email_conf, token=None):
             notification.save()
         else:
             create_notification(task, notes, error=True)
+
+
+
+def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
+    SENDGRID_API_KEY = settings.SENDGRID_API_KEY
+    SENDGRID_FROM_EMAIL = (settings.SENDGRID_FROM_EMAIL, settings.SENDGRID_FROM_NAME)
+    sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+    html_content = Content("text/html", content)
+
+    message = Mail(
+        from_email=SENDGRID_FROM_EMAIL,
+        to_emails=to_emails,
+        subject=subject,
+        html_content=html_content
+    )
+
+    if to_ccs:
+        ccs = []
+        for cc_person in to_ccs:
+            ccs.append(
+                Cc(cc_person, cc_person)
+            )
+
+        message.add_cc(ccs)
+    
+
+    try:
+        response = sg.send(message)
+    except Exception as e:
+        print(e)
+        print(e.body)
+        print(e.message)
+
+    return response

@@ -26,11 +26,11 @@ class InviteUser(BaseTask):
     email_config = {
         "initial": None,
         "token": {
-            "template": "invite_user_to_project_token.txt",
+            "template": "invite_user_to_project_token.html",
             "subject": "invite_user_to_project",
         },
         "completed": {
-            "template": "invite_user_to_project_completed.txt",
+            "template": "invite_user_to_project_completed.html",
             "subject": "invite_user_to_project",
         },
     }
@@ -46,12 +46,12 @@ class ResetUserPassword(BaseTask):
     email_config = {
         "initial": None,
         "token": {
-            "template": "reset_user_password_token.txt",
-            "subject": "Password Reset for OpenStack",
+            "template": "reset_user_password_token.html",
+            "subject": "Password Reset for Lorius",
         },
         "completed": {
-            "template": "reset_user_password_completed.txt",
-            "subject": "Password Reset for OpenStack",
+            "template": "reset_user_password_completed.html",
+            "subject": "Password Reset for Lorius",
         },
     }
 
