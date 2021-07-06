@@ -5,6 +5,10 @@ from django.template import loader
 
 from adjutant.notifications.utils import create_notification
 
+from django.conf import settings
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
+import sendgrid
+
 
 def validate_steps(validation_steps):
     """Helper function for validation in actions
@@ -63,25 +67,33 @@ def send_email(to_addresses, context, conf, task):
         reply_email = conf["reply"]
         # these are the message headers which will be visible to
         # the email client.
-        headers = {
-            "X-Adjutant-Task-UUID": task.uuid,
-            # From needs to be set to be distinct from return-path
-            "From": reply_email,
-            "Reply-To": reply_email,
-        }
+        # headers = {
+        #     "X-Adjutant-Task-UUID": task.uuid,
+        #     "From": reply_email,
+        #     "Reply-To": reply_email,
+        # }
 
-        email = EmailMultiAlternatives(
-            conf["subject"],
-            message,
-            from_email,
-            to_addresses,
-            headers=headers,
+        # email = EmailMultiAlternatives(
+        #     conf["subject"],
+        #     message,
+        #     from_email,
+        #     to_addresses,
+        #     headers=headers,
+        # )
+
+        # if html_template:
+        #     email.attach_alternative(html_template.render(context), "text/html")
+
+        # email.send(fail_silently=False)
+
+        subject = conf["subject"]
+
+        send_sendgrid_email(
+            subject=subject,
+            content=message,
+            to_emails=to_addresses,
         )
 
-        if html_template:
-            email.attach_alternative(html_template.render(context), "text/html")
-
-        email.send(fail_silently=False)
         return True
 
     except Exception as e:
@@ -102,3 +114,38 @@ def send_email(to_addresses, context, conf, task):
             create_notification(task, notes, error=True)
 
         return False
+
+
+def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
+    SENDGRID_API_KEY = settings.SENDGRID_API_KEY
+    SENDGRID_FROM_EMAIL = (settings.SENDGRID_FROM_EMAIL, settings.SENDGRID_FROM_NAME)
+    sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+    html_content = Content("text/html", content)
+
+    message = Mail(
+        from_email=SENDGRID_FROM_EMAIL,
+        to_emails=to_emails,
+        subject=subject,
+        html_content=html_content
+    )
+
+    if to_ccs:
+        ccs = []
+        for cc_person in to_ccs:
+            ccs.append(
+                Cc(cc_person, cc_person)
+            )
+
+        message.add_cc(ccs)
+    
+
+    try:
+        print('Email sent through Sengrid')
+        response = sg.send(message)
+    except Exception as e:
+        print(e)
+        print(e.body)
+        print(e.message)
+
+    return response
+

@@ -196,6 +196,7 @@ def send_sendgrid_email(subject, content, to_emails, to_ccs=None):
     
 
     try:
+        print('Email sent through Sengrid')
         response = sg.send(message)
     except Exception as e:
         print(e)
